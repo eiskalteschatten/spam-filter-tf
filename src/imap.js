@@ -7,6 +7,8 @@ const cryptr = new Cryptr('jfio4j39fj4IFJ$($#FJjskjri3ou48oi3nvmk.JFKIJ$(#FJKdsn
 
 const config = require('../account');
 
+let imap;
+
 function setupConnection() {
     console.log('Setting up connection to the IMAP server...');
 
@@ -15,7 +17,7 @@ function setupConnection() {
         password: cryptr.decrypt(config.account.password)
     };
 
-    const imap = new Imap(accountConfig);
+    imap = new Imap(accountConfig);
 
     imap.once('ready', () => {
         console.log('Connected to IMAP server.');
@@ -35,5 +37,6 @@ function setupConnection() {
 }
 
 module.exports = {
-    setupConnection
+    setupConnection,
+    getConnection: () => imap
 };
