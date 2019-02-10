@@ -7,11 +7,21 @@ const cryptr = new Cryptr('jfio4j39fj4IFJ$($#FJjskjri3ou48oi3nvmk.JFKIJ$(#FJKdsn
 
 const accountConfig = require('../account');
 
+const { checkForSpam } = require('./spam');
+
 let imapConnection;
 
 
-function onmail(numNewMail) {
-    console.log('Checking new email', numNewMail);
+async function onmail() {
+    const searchCriteria = ['UNSEEN'];
+
+    const fetchOptions = {
+        bodies: [''],
+        markSeen: false
+    };
+
+    const messages = await imapConnection.search(searchCriteria, fetchOptions);
+    checkForSpam(messages);
 }
 
 function onerror(error) {
