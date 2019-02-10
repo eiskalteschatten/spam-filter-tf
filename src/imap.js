@@ -9,59 +9,51 @@ const accountConfig = require('../account');
 
 const { checkForSpam } = require('./spam');
 
-let imapConnection;
+class ImapConnection {
+    async setupConnection() {
+        console.log('Setting up connection to the IMAP server...');
 
+        try {
+            const config = {
+                ...accountConfig.imapSimple,
+                imap: {
+                    ...accountConfig.imapSimple.imap,
+                    password: cryptr.decrypt(accountConfig.imapSimple.imap.password)
+                },
+                onmail: async () => {
+                    const searchCriteria = ['UNSEEN'];
 
-async function onmail() {
-    const searchCriteria = ['UNSEEN'];
+                    const fetchOptions = {
+                        bodies: [''],
+                        markSeen: false,
+                        struct: true
+                    };
 
-    const fetchOptions = {
-        bodies: [''],
-        markSeen: false
-    };
+                    const messages = await this.connection.search(searchCriteria, fetchOptions);
+                    checkForSpam(messages);
+                },
+                onerror: error => console.error('There was an error connecting to the IMAP server:\n', error),
+                onend: () => console.log('The connection to the IMAP server has ended.')
+            };
 
-    const messages = await imapConnection.search(searchCriteria, fetchOptions);
-    checkForSpam(messages);
-}
+            this.connection = await imaps.connect(config);
 
-function onerror(error) {
-    console.error('There was an error connecting to the IMAP server:\n', error);
-}
+            console.log('Connected to the IMAP server.');
 
-function onend() {
-    console.log('The connection to the IMAP server has ended.');
-}
-
-async function setupConnection() {
-    console.log('Setting up connection to the IMAP server...');
-
-    try {
-        const config = {
-            ...accountConfig.imapSimple,
-            imap: {
-                ...accountConfig.imapSimple.imap,
-                password: cryptr.decrypt(accountConfig.imapSimple.imap.password)
-            },
-            onmail,
-            onerror,
-            onend
-        };
-
-        imapConnection = await imaps.connect(config);
-
-        console.log('Connected to the IMAP server.');
+            return this.connection;
+        }
+        catch(error) {
+            console.error('There was an error connecting to the IMAP server:\n', error);
+        }
     }
-    catch(error) {
-        console.error('There was an error connecting to the IMAP server:\n', error);
+
+    async openInbox() {
+        await this.connection.openBox('INBOX');
+    }
+
+    getConnection() {
+        return this.connection;
     }
 }
 
-async function openInbox() {
-    imapConnection.openBox('INBOX');
-}
-
-module.exports = {
-    setupConnection,
-    openInbox,
-    getConnection: () => imapConnection
-};
+module.exports = ImapConnection;

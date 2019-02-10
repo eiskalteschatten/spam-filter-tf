@@ -1,6 +1,6 @@
 'use strict';
 
-const { setupConnection, openInbox } = require('./imap');
+const ImapConnection = require('./imap');
 const { trainHam, trainSpam } = require('./spam');
 
 async function main() {
@@ -12,8 +12,9 @@ async function main() {
             await trainSpam();
             break;
         default:
-            await setupConnection();
-            openInbox();
+            const imapConnection = new ImapConnection();
+            await imapConnection.setupConnection();
+            await imapConnection.openInbox();
     }
 }
 
