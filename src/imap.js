@@ -10,7 +10,7 @@ const accountConfig = require('../account');
 const { checkForSpam } = require('./spam');
 
 class ImapConnection {
-    async setupConnection() {
+    async setupConnection(watchForSpam = false) {
         console.log('Setting up connection to the IMAP server...');
 
         try {
@@ -20,7 +20,12 @@ class ImapConnection {
                     ...accountConfig.imapSimple.imap,
                     password: cryptr.decrypt(accountConfig.imapSimple.imap.password)
                 },
-                onmail: async () => {
+                onerror: error => console.error('There was an error connecting to the IMAP server:\n', error),
+                onend: () => console.log('The connection to the IMAP server has ended.')
+            };
+
+            if (watchForSpam) {
+                config.onmail = async () => {
                     const searchCriteria = ['UNSEEN'];
 
                     const fetchOptions = {
@@ -31,10 +36,8 @@ class ImapConnection {
 
                     const messages = await this.connection.search(searchCriteria, fetchOptions);
                     checkForSpam(messages);
-                },
-                onerror: error => console.error('There was an error connecting to the IMAP server:\n', error),
-                onend: () => console.log('The connection to the IMAP server has ended.')
-            };
+                };
+            }
 
             this.connection = await imaps.connect(config);
 

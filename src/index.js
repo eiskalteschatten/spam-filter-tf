@@ -13,7 +13,7 @@ async function main() {
             break;
         default:
             const imapConnection = new ImapConnection();
-            await imapConnection.setupConnection();
+            await imapConnection.setupConnection(true);
             await imapConnection.openInbox();
     }
 }
