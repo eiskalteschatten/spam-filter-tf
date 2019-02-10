@@ -1,11 +1,22 @@
 {
-  "name": "spam-filter-tf",
-  "version": "0.1.0",
-  "description": "A spam filter that uses TensorFlow.",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "Alex Seifert",
-  "license": "ISC"
+    "name": "spam-filter-tf",
+    "version": "0.1.0",
+    "description": "A spam filter that uses TensorFlow.",
+    "main": "src/index.js",
+    "scripts": {
+        "lint": "./node_modules/.bin/eslint ./src/**/*.js",
+        "test": "npm run lint"
+    },
+    "author": "Alex Seifert",
+    "license": "ISC",
+    "husky": {
+    "hooks": {
+        "pre-commit": "npm run lint"
+    }
+    },
+    "devDependencies": {
+        "eslint": "^5.13.0",
+        "eslint-plugin-promise": "^4.0.1",
+        "husky": "^1.3.1"
+    }
 }
