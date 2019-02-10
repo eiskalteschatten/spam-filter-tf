@@ -24,6 +24,6 @@
     "dependencies": {
         "@tensorflow/tfjs": "^0.15.1",
         "cryptr": "^4.0.2",
-        "imap": "^0.8.19"
+        "imap-simple": "^4.3.0"
     }
 }
