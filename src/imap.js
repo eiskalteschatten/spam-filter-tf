@@ -37,17 +37,11 @@ async function setupConnection() {
             onend
         };
 
-        const { connection, error } = await imaps.connect(config);
-        imapConnection = connection;
-
-        if (error) {
-            console.error('There was an error connecting to the IMAP server:', error);
-            return;
-        }
+        imapConnection = await imaps.connect(config);
 
         console.log('Connected to the IMAP server.');
 
-
+        imapConnection.openBox('INBOX');
     }
     catch(error) {
         console.error('There was an error connecting to the IMAP server:\n', error);
