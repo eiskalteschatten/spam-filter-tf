@@ -4,6 +4,7 @@
     "description": "A spam filter that uses TensorFlow.",
     "main": "src/index.js",
     "scripts": {
+        "start": "node ./src/index.js",
         "lint": "./node_modules/.bin/eslint ./src/**/*.js",
         "test": "npm run lint",
         "password": "node ./scripts/encrypt-password.js"
@@ -22,7 +23,7 @@
     },
     "dependencies": {
         "@tensorflow/tfjs": "^0.15.1",
-        "bcrypt-nodejs": "0.0.3",
+        "cryptr": "^4.0.2",
         "imap": "^0.8.19"
     }
 }
