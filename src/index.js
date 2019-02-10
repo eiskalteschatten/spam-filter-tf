@@ -1,5 +1,10 @@
 'use strict';
 
-const { setupConnection } = require('./imap');
+const { setupConnection, openInbox } = require('./imap');
 
-setupConnection();
+async function main() {
+    await setupConnection();
+    openInbox();
+}
+
+main();
